@@ -1,0 +1,26 @@
+# FastAPI → lightweight backend framework to expose APIs (e.g., /search endpoint)
+fastapi
+
+# Uvicorn → ASGI server to run FastAPI app locally (production-grade async server)
+uvicorn[standard]
+
+# ChromaDB → local vector database to store embeddings and perform similarity search
+chromadb
+
+# Sentence Transformers → converts text into vector embeddings for semantic search
+sentence-transformers
+
+# Torch (PyTorch) → backend engine required by sentence-transformers for model inference
+torch
+
+# Wikipedia API → free source to fetch online data for ingestion (no paid APIs needed)
+wikipedia-api
+
+# LangChain Text Splitters → helps break large text into smaller chunks for embedding
+langchain-text-splitters
+
+# NumPy → efficient numerical operations (used internally by embeddings/vector DB)
+numpy
+
+# tqdm → progress bars for ingestion pipeline (useful for large datasets)
+tqdm
