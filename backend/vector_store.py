@@ -2,8 +2,9 @@ import os
 import json
 import chromadb
 
-EMBEDDINGS_DATA_DIR = "../data/embeddings"
-CHROMA_DB_DIR = "../data/chroma_db"
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+EMBEDDINGS_DATA_DIR = os.path.join(_ROOT, "data", "embeddings")
+CHROMA_DB_DIR = os.path.join(_ROOT, "data", "chroma_db")
 
 COLLECTION_NAME = "wiki_articles"
 

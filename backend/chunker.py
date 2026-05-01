@@ -2,8 +2,9 @@ import json
 import os
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-RAW_DATA_DIR = "../data/raw"
-PROCRESSED_DATA_DIR = "../data/processed"
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+RAW_DATA_DIR = os.path.join(_ROOT, "data", "raw")
+PROCRESSED_DATA_DIR = os.path.join(_ROOT, "data", "processed")
 
 # Chuck settings            
 # chunk_size: max number of characters in each chunk
