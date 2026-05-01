@@ -3,8 +3,9 @@ import os
 from tqdm import tqdm
 from sentence_transformers import SentenceTransformer
 
-PROCESSED_DATA_DIR = "../data/processed"
-EMBEDDINGS_DATA_DIR = "../data/embeddings"
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+PROCESSED_DATA_DIR = os.path.join(_ROOT, "data", "processed")
+EMBEDDINGS_DATA_DIR = os.path.join(_ROOT, "data", "embeddings")
 
 # Free local embedding model
 # It creates small, fast embeddings and works well for semantic search and clustering tasks.

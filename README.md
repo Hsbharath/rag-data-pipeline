@@ -44,18 +44,18 @@ It:
 rag-data-pipeline/
 │
 ├── backend/
-│   ├── app.py            # FastAPI app with /search, /health endpoints + CORS
+│   ├── app.py            # FastAPI app — /search, /health endpoints + CORS
 │   ├── ingest.py         # Wikipedia fetch + chunk pipeline
 │   ├── chunker.py        # Text splitting logic
 │   ├── embedder.py       # Embedding generation (saves to data/embeddings/)
 │   ├── vector_store.py   # Loads embeddings into ChromaDB
-│   ├── search.py         # Query logic (embeds query → searches ChromaDB)
+│   ├── search.py         # Query logic — embeds query and searches ChromaDB
 │   ├── requirements.txt
-│   └── venv/             # Virtual environment
+│   └── venv/             # Virtual environment (not committed)
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx       # Search UI — query input, top-k selector, results
+│   │   ├── App.jsx       # Search UI — query input, top-k selector, result cards
 │   │   ├── App.css       # Styles
 │   │   └── main.jsx      # React entry point
 │   ├── public/
@@ -63,7 +63,7 @@ rag-data-pipeline/
 │   ├── vite.config.js
 │   └── package.json
 │
-├── data/
+├── data/                 # Generated at runtime — not committed
 │   ├── raw/              # Raw Wikipedia text
 │   ├── processed/        # Chunked text as JSON
 │   ├── embeddings/       # Generated embedding JSON files
@@ -74,28 +74,19 @@ rag-data-pipeline/
 
 ---
 
-## Setup Instructions
+## Setup
 
 ### Backend
-
-#### 1. Create and activate virtual environment
 
 ```bash
 cd backend
 python3 -m venv venv
 source venv/bin/activate
-```
-
-#### 2. Install dependencies
-
-```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
 ### Frontend
-
-#### 3. Install frontend dependencies
 
 ```bash
 cd frontend
@@ -108,7 +99,7 @@ npm install
 
 Run each step from inside the `backend/` directory with the virtual environment activated.
 
-### Step 1 — Ingest Wikipedia data and chunk it
+### Step 1 — Ingest Wikipedia data
 
 ```bash
 python ingest.py
@@ -138,11 +129,7 @@ Reads embedding JSON files and inserts them into a local ChromaDB collection (`w
 uvicorn app:app --reload
 ```
 
-API runs at `http://127.0.0.1:8000`. Interactive docs at:
-
-```
-http://127.0.0.1:8000/docs
-```
+API runs at `http://127.0.0.1:8000`. Interactive Swagger docs at `http://127.0.0.1:8000/docs`.
 
 ### Step 5 — Start the frontend
 
@@ -155,42 +142,73 @@ Frontend runs at `http://localhost:5173`.
 
 ---
 
-## API Endpoints
+## API Reference
+
+### Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/` | Confirms API is running |
 | `GET` | `/health` | Returns `{"status": "healthy"}` |
-| `GET` | `/search?q=...&top_k=5` | Semantic search over stored Wikipedia chunks |
+| `GET` | `/search` | Semantic search over stored Wikipedia chunks |
 
-### Example search query
+### `GET /search`
+
+**Query parameters**
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `q` | string | Yes | — | Natural language search query |
+| `top_k` | integer | No | `5` | Number of results to return |
+
+### Sample queries
 
 ```
+GET /search?q=How does machine learning work?&top_k=3
 GET /search?q=What is a vector database?&top_k=5
+GET /search?q=How is AI related to cloud computing?&top_k=5
+GET /search?q=What are transformers in NLP?&top_k=3
+GET /search?q=Explain neural networks&top_k=5
 ```
 
-Response:
+### Example response
+
+```bash
+curl "http://127.0.0.1:8000/search?q=What+is+a+vector+database%3F&top_k=2"
+```
 
 ```json
 {
   "query": "What is a vector database?",
-  "top_k": 5,
+  "top_k": 2,
   "results": [
     {
-      "id": "chunk_id",
-      "text": "...",
-      "metadata": { "article": "Vector database" },
-      "distance": 0.21
+      "id": "vector_database_chunk_0",
+      "text": "A vector database is a type of database that stores data as high-dimensional vectors, which are mathematical representations of features or attributes...",
+      "metadata": {
+        "article": "vector database"
+      },
+      "distance": 0.1842
+    },
+    {
+      "id": "vector_database_chunk_3",
+      "text": "Vector databases are used in a variety of applications including recommendation systems, image search, natural language processing, and anomaly detection...",
+      "metadata": {
+        "article": "vector database"
+      },
+      "distance": 0.2317
     }
   ]
 }
 ```
 
+**Distance** is a cosine distance score — lower values indicate higher semantic similarity.
+
 ---
 
 ## Features
 
-* 100% free and local (no paid APIs)
+* 100% free and local — no paid APIs
 * Modular pipeline — each stage is an independent script
 * Semantic search using dense vector embeddings
 * Persistent ChromaDB storage — no re-ingestion needed between runs
@@ -200,19 +218,12 @@ Response:
 
 ---
 
-## Backend Changes (this branch)
-
-* **CORS middleware** added to `app.py` — allows requests from `http://localhost:5173` and `http://127.0.0.1:5173` (Vite dev server)
-* **Defensive error handling** in `vector_store.py` — raises a clear `FileNotFoundError` with instructions if the embeddings directory is missing instead of crashing silently
-
----
-
 ## Why this project?
 
 This project showcases:
 
 * End-to-end data pipeline design
-* Vector databases & embeddings
+* Vector databases and embeddings
 * Backend API development with FastAPI
 * Frontend integration with React + Vite
 * Practical AI/ML system implementation

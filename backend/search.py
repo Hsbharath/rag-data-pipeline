@@ -1,27 +1,17 @@
+import os
 import chromadb
 from sentence_transformers import SentenceTransformer
 
-CHROMA_DB_DIR = "../data/chroma_db"
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+CHROMA_DB_DIR = os.path.join(_ROOT, "data", "chroma_db")
 COLLECTION_NAME = "wiki_articles"
 
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
-
-def load_embedding_model():
-    """
-    Load the same embedding model used during PR5.
-    Query embeddings must use the same model as stored chunk embeddings.
-    """
-    print(f"Loading embedding model: {EMBEDDING_MODEL_NAME}")
-    return SentenceTransformer(EMBEDDING_MODEL_NAME)
-
-
-def get_collection():
-    """
-    Connect to local ChromaDB and load the existing collection.
-    """
-    client = chromadb.PersistentClient(path=CHROMA_DB_DIR)
-    return client.get_collection(name=COLLECTION_NAME)
+# Loaded once at startup — reused across all requests
+print(f"Loading embedding model: {EMBEDDING_MODEL_NAME}")
+_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+_collection = chromadb.PersistentClient(path=CHROMA_DB_DIR).get_collection(name=COLLECTION_NAME)
 
 
 def search_chunks(query, top_k=5):
@@ -29,12 +19,9 @@ def search_chunks(query, top_k=5):
     Search ChromaDB using a natural language query.
     Returns the most similar stored chunks.
     """
-    model = load_embedding_model()
-    collection = get_collection()
+    query_embedding = _model.encode(query).tolist()
 
-    query_embedding = model.encode(query).tolist()
-
-    results = collection.query(
+    results = _collection.query(
         query_embeddings=[query_embedding],
         n_results=top_k
     )

@@ -1,8 +1,8 @@
 import os
 import wikipediaapi
 
-# Folder where all raw Wikipedia text files will be stored
-RAW_DATA_DIR = "../data/raw"
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+RAW_DATA_DIR = os.path.join(_ROOT, "data", "raw")
 
 # List of Wikipedia articles we want to ingest
 # You can expand this later or even make it dynamic
