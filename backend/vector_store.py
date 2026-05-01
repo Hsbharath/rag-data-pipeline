@@ -26,6 +26,12 @@ def load_embedding_files():
     """
     Load all embedding JSON files from directory.
     """
+    if not os.path.exists(EMBEDDINGS_DATA_DIR):
+        raise FileNotFoundError(
+            f"Embeddings directory not found: '{EMBEDDINGS_DATA_DIR}'\n"
+            "Run embedder.py first to generate embeddings."
+        )
+
     for filename in os.listdir(EMBEDDINGS_DATA_DIR):
         if not filename.endswith(".json"):
             continue
