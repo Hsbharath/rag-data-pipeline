@@ -39,7 +39,7 @@ h1 {
   margin-top: 24px;
 }
 
-input {
+input[type="text"] {
   flex: 1;
   padding: 12px 14px;
   border: 1px solid #d1d5db;
@@ -67,6 +67,109 @@ button:disabled {
   opacity: 0.7;
 }
 
+/* Mode selector */
+
+.mode-selector {
+  margin-top: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.mode-selector legend {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  padding: 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mode-option {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.mode-option input[type="radio"] {
+  margin-top: 3px;
+  accent-color: #111827;
+  flex-shrink: 0;
+}
+
+.mode-option--active {
+  border-color: #111827;
+  background: #f9fafb;
+}
+
+.mode-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mode-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mode-desc {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* RAG answer block */
+
+.rag-answer {
+  margin-top: 28px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+
+.rag-answer__heading {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.rag-answer__text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #1f2937;
+}
+
+.rag-answer__source-label {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Source chunks heading */
+
+.source-heading {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Status messages */
+
 .message {
   margin-top: 20px;
   color: #374151;
@@ -76,6 +179,8 @@ button:disabled {
   margin-top: 20px;
   color: #b91c1c;
 }
+
+/* Result cards */
 
 .results {
   margin-top: 28px;
