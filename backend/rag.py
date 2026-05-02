@@ -23,8 +23,19 @@ def generate_answer(query: str, chunks: list[dict], detail: str = "high") -> str
     context = "\n\n".join(chunk["text"] for chunk in chunks)
 
     # flan-t5 works best with explicit instruction framing
+    if detail == "low":
+        instruction = (
+            "Answer the following question in one or two short sentences. "
+            "Be direct and concise. Do not elaborate."
+        )
+    else:
+        instruction = (
+            "Answer the following question in detail. "
+            "Provide a thorough, elaborated explanation with multiple sentences."
+        )
+
     prompt = (
-        f"Answer the following question using only the context provided.\n\n"
+        f"{instruction}\n\n"
         f"Context:\n{context}\n\n"
         f"Question: {query}\n\n"
         f"Answer:"

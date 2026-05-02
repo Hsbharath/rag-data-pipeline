@@ -4,6 +4,14 @@ A fully local, end-to-end data pipeline that ingests Wikipedia data, generates v
 
 ---
 
+## Demo
+
+https://github.com/user-attachments/assets/wikivector_search.mov
+
+> Search Wikipedia knowledge with semantic retrieval and local RAG answer generation — no paid APIs required.
+
+---
+
 ## Overview
 
 This project demonstrates how to build a simple **RAG-style (Retrieval-Augmented Generation) pipeline** without relying on paid APIs.
@@ -37,6 +45,10 @@ Retrieves the top-k chunks from ChromaDB and passes them as context to a local t
 The response includes:
 * A generated `answer` string
 * The `source_chunks` used to produce it (same shape as Semantic Retrieval results)
+
+**Detail level** controls how the answer is generated:
+* `low` — concise, 1–2 sentence answer (~100 tokens)
+* `high` — thorough, elaborated answer (~500 tokens)
 
 Use this when you want a direct, synthesised answer rather than raw document fragments.
 
@@ -92,6 +104,9 @@ rag-data-pipeline/
 │   ├── processed/        # Chunked text as JSON
 │   ├── embeddings/       # Generated embedding JSON files
 │   └── chroma_db/        # Persistent ChromaDB vector store
+│
+├── video/
+│   └── wikivector_search.mov   # Demo recording
 │
 └── README.md
 ```
@@ -187,14 +202,16 @@ Frontend runs at `http://localhost:5173`.
 | `q` | string | Yes | — | Natural language search query |
 | `top_k` | integer | No | `5` | Number of chunks to retrieve |
 | `mode` | string | No | `semantic` | `semantic` returns raw chunks; `rag` returns a generated answer |
+| `detail` | string | No | `high` | Only applies when `mode=rag`. `low` = concise (~100 tokens); `high` = detailed (~500 tokens) |
 
 ### Sample queries
 
 ```
 GET /search?q=How does machine learning work?&top_k=3
 GET /search?q=What is a vector database?&mode=rag&top_k=5
+GET /search?q=What is a vector database?&mode=rag&detail=low&top_k=5
 GET /search?q=How is AI related to cloud computing?&mode=semantic&top_k=5
-GET /search?q=What are transformers in NLP?&mode=rag&top_k=3
+GET /search?q=What are transformers in NLP?&mode=rag&detail=high&top_k=3
 ```
 
 ### Example response — Semantic Retrieval
@@ -228,7 +245,7 @@ curl "http://127.0.0.1:8000/search?q=What+is+a+vector+database%3F&top_k=2"
 ### Example response — RAG Answer
 
 ```bash
-curl "http://127.0.0.1:8000/search?q=What+is+a+vector+database%3F&top_k=2&mode=rag"
+curl "http://127.0.0.1:8000/search?q=What+is+a+vector+database%3F&top_k=2&mode=rag&detail=high"
 ```
 
 ```json
@@ -236,6 +253,7 @@ curl "http://127.0.0.1:8000/search?q=What+is+a+vector+database%3F&top_k=2&mode=r
   "query": "What is a vector database?",
   "top_k": 2,
   "mode": "rag",
+  "detail": "high",
   "answer": "A vector database stores data as high-dimensional vectors and is used in applications such as recommendation systems, image search, and natural language processing.",
   "source_chunks": [
     {
@@ -262,12 +280,13 @@ curl "http://127.0.0.1:8000/search?q=What+is+a+vector+database%3F&top_k=2&mode=r
 
 * 100% free and local — no paid APIs
 * Two search modes: raw chunk retrieval and generated natural language answers
+* Configurable RAG answer detail — concise (~100 tokens) or detailed (~500 tokens)
 * Modular pipeline — each stage is an independent script
 * Semantic search using dense vector embeddings
 * Persistent ChromaDB storage — no re-ingestion needed between runs
 * FastAPI with auto-generated Swagger UI at `/docs`
 * CORS enabled for local frontend development
-* React frontend with natural language search, top-k selector, mode toggle, and result cards
+* React frontend with natural language search, top-k selector, mode toggle, detail level selector, and result cards
 
 ---
 
