@@ -24,3 +24,9 @@ numpy
 
 # tqdm → progress bars for ingestion pipeline (useful for large datasets)
 tqdm
+
+# Transformers → local text generation model for RAG answer synthesis (flan-t5-base)
+transformers
+
+# SentencePiece → tokenizer backend required by flan-t5 and other T5-family models
+sentencepiece

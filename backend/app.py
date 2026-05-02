@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 from search import search_chunks
+from rag import generate_answer
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -34,15 +35,38 @@ def health_check():
 @app.get("/search")
 def search(
     q: str = Query(..., description="Search query"),
-    top_k: int = Query(5, description="Number of results to return")
+    top_k: int = Query(5, description="Number of results to return"),
+    mode: str = Query("semantic", description="Search mode: 'semantic' or 'rag'"),
+    detail: str = Query("high", description="RAG answer detail level: 'low' (~100 tokens) or 'high' (~500 tokens)")
 ):
     """
     Search stored Wikipedia chunks using natural language.
+
+    mode=semantic (default): returns top matching chunks from ChromaDB.
+    mode=rag: retrieves top chunks then generates a natural language answer.
+    detail=low: concise answer. detail=high: detailed answer (only applies when mode=rag).
     """
-    results = search_chunks(q, top_k)
+    if mode not in ("semantic", "rag"):
+        raise HTTPException(status_code=400, detail="mode must be 'semantic' or 'rag'")
+    if detail not in ("low", "high"):
+        raise HTTPException(status_code=400, detail="detail must be 'low' or 'high'")
+
+    chunks = search_chunks(q, top_k)
+
+    if mode == "rag":
+        answer = generate_answer(q, chunks, detail=detail)
+        return {
+            "query": q,
+            "top_k": top_k,
+            "mode": "rag",
+            "detail": detail,
+            "answer": answer,
+            "source_chunks": chunks,
+        }
 
     return {
         "query": q,
         "top_k": top_k,
-        "results": results
+        "mode": "semantic",
+        "results": chunks,
     }
