@@ -1,3 +1,5 @@
+
+
 # RAG Data Pipeline
 
 A fully local, end-to-end data pipeline that ingests Wikipedia data, generates vector embeddings, stores them in ChromaDB, exposes a semantic search API, and includes a React frontend — all using free and open-source tools.
